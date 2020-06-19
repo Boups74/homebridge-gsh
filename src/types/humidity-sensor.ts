@@ -22,8 +22,13 @@ export class HumiditySensor {
       attributes: {
         queryOnlyTemperatureControl: true,
         queryOnlyHumiditySetting: true,
-        temperatureUnitForUX: this.hap.config.forceFahrenheit ? 'F'
-          : service.characteristics.find(x => x.type === Characteristic.TemperatureDisplayUnits).value ? 'F' : 'C',
+        temperatureUnitForUX: this.hap.config.forceFahrenheit 
+                              ? 'F'
+                              : (service.characteristics.find(x => x.type === Characteristic.TemperatureDisplayUnits)
+                                 ? (service.characteristics.find(x => x.type === Characteristic.TemperatureDisplayUnits).value 
+                                    ? 'F' 
+                                    : 'C')
+                                 : 'C'),
       },
       name: {
         defaultNames: [
