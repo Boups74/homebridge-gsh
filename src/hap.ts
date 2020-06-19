@@ -21,6 +21,8 @@ import { Thermostat } from './types/thermostat';
 import { Window } from './types/window';
 import { WindowCovering } from './types/window-covering';
 import { HeaterCooler } from './types/heater-cooler';
+import { HumiditySensor } from './types/humidity-sensor';
+import { TemperatureSensor } from './types/temperature-sensor';
 
 export class Hap {
   socket;
@@ -39,12 +41,14 @@ export class Hap {
     Fanv2: new Fanv2(),
     GarageDoorOpener: new GarageDoorOpener(),
     HeaterCooler: new HeaterCooler(this),
+	HumiditySensor: new HumiditySensor(this),
     Lightbulb: new Lightbulb(),
     LockMechanism: new LockMechanism(),
     Outlet: new Switch('action.devices.types.OUTLET'),
     SecuritySystem: new SecuritySystem(),
     Switch: new Switch('action.devices.types.SWITCH'),
     Television: new Television(),
+	TemperatureSensor: TemperatureSensor(this),
     Thermostat: new Thermostat(this),
     Window: new Window(),
     WindowCovering: new WindowCovering(),
