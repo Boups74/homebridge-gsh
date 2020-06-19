@@ -10,25 +10,31 @@ export class TemperatureSensor {
   }
 
   sync(service: HapService) {
+    var unit = this.hap.config.forceFahrenheit 
+              ? 'F'
+              : (service.characteristics.find(x => x.type === Characteristic.TemperatureDisplayUnits)
+                ? (service.characteristics.find(x => x.type === Characteristic.TemperatureDisplayUnits).value 
+                    ? 'F' 
+                    : 'C')
+                : 'C');
 
     return {
       id: service.uniqueId,
       // https://developers.google.com/assistant/smarthome/guides/sensor
       type: 'action.devices.types.SENSOR',
+      // type: 'action.devices.types.THERMOSTAT',
       traits: [
+        //'action.devices.traits.TemperatureSetting',
         'action.devices.traits.TemperatureControl',
         'action.devices.traits.HumiditySetting',
       ],
       attributes: {
+        // availableThermostatModes: ['off'],
+        // thermostatTemperatureUnit: unit,
         queryOnlyTemperatureControl: true,
         queryOnlyHumiditySetting: true,
-        temperatureUnitForUX: this.hap.config.forceFahrenheit 
-                              ? 'F'
-                              : (service.characteristics.find(x => x.type === Characteristic.TemperatureDisplayUnits)
-                                 ? (service.characteristics.find(x => x.type === Characteristic.TemperatureDisplayUnits).value 
-                                    ? 'F' 
-                                    : 'C')
-                                 : 'C')      },
+        temperatureUnitForUX: unit,
+      },
       name: {
         defaultNames: [
           service.serviceName,
@@ -54,14 +60,21 @@ export class TemperatureSensor {
 
   query(service: HapService) {
 
+    var tempValue = service.characteristics.find(x => x.type === Characteristic.CurrentTemperature).value;
+    var humidity = service.characteristics.find(x => x.type === Characteristic.CurrentRelativeHumidity);
+
     const response = {
       online: true,
-      temperatureAmbientCelsius: service.characteristics.find(x => x.type === Characteristic.CurrentTemperature).value,
+      // thermostatTemperatureAmbient: tempValue,
+      // thermostatTemperatureSetpoint: tempValue,
+      // thermostatMode: 'off',
+      temperatureAmbientCelsius: tempValue,
     } as any;
 
     // check if device reports CurrentRelativeHumidity
-    if (service.characteristics.find(x => x.type === Characteristic.CurrentRelativeHumidity)) {
-      response.humidityAmbientPercent = service.characteristics.find(x => x.type === Characteristic.CurrentRelativeHumidity).value;
+    if (humidity) {
+      response.humidityAmbientPercent = humidity.value;
+      // response.thermostatHumidityAmbient = humidity.value;
     }
 
     return response;

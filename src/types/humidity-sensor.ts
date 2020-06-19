@@ -10,25 +10,25 @@ export class HumiditySensor {
   }
 
   sync(service: HapService) {
+    var unit = this.hap.config.forceFahrenheit 
+              ? 'F'
+              : (service.characteristics.find(x => x.type === Characteristic.TemperatureDisplayUnits)
+                ? (service.characteristics.find(x => x.type === Characteristic.TemperatureDisplayUnits).value 
+                    ? 'F' 
+                    : 'C')
+                : 'C');
 
     return {
       id: service.uniqueId,
-      // https://developers.google.com/assistant/smarthome/guides/sensor
       type: 'action.devices.types.SENSOR',
       traits: [
-        'action.devices.traits.HumiditySetting',
         'action.devices.traits.TemperatureControl',
+        'action.devices.traits.HumiditySetting',
       ],
       attributes: {
         queryOnlyTemperatureControl: true,
         queryOnlyHumiditySetting: true,
-        temperatureUnitForUX: this.hap.config.forceFahrenheit 
-                              ? 'F'
-                              : (service.characteristics.find(x => x.type === Characteristic.TemperatureDisplayUnits)
-                                 ? (service.characteristics.find(x => x.type === Characteristic.TemperatureDisplayUnits).value 
-                                    ? 'F' 
-                                    : 'C')
-                                 : 'C'),
+        temperatureUnitForUX: unit,
       },
       name: {
         defaultNames: [
@@ -55,16 +55,17 @@ export class HumiditySensor {
 
   query(service: HapService) {
 
+    var humidityValue = service.characteristics.find(x => x.type === Characteristic.CurrentRelativeHumidity).value;
+    var temperature = service.characteristics.find(x => x.type === Characteristic.CurrentTemperature);
+
     const response = {
       online: true,
-      humidityAmbientPercent: service.characteristics.find(x => x.type === Characteristic.CurrentRelativeHumidity).value,
+      humidityAmbientPercent: humidityValue,
     } as any;
 
-    // check if device reports CurrentTemperature
-    if (service.characteristics.find(x => x.type === Characteristic.CurrentTemperature)) {
-      response.temperatureAmbientCelsius = service.characteristics.find(x => x.type === Characteristic.CurrentTemperature).value;
+    if (temperature) {
+      response.temperatureAmbientCelsius = temperature.value;
     }
-
     return response;
   }
 
