@@ -13,15 +13,15 @@ export class TemperatureSensor {
 
     return {
       id: service.uniqueId,
-	  // https://developers.google.com/assistant/smarthome/guides/sensor
+      // https://developers.google.com/assistant/smarthome/guides/sensor
       type: 'action.devices.types.SENSOR',
       traits: [
         'action.devices.traits.TemperatureControl',
-		'action.devices.traits.HumiditySetting',
+        'action.devices.traits.HumiditySetting',
       ],
       attributes: {
         queryOnlyTemperatureControl: true,
-		queryOnlyHumiditySetting: true,
+        queryOnlyHumiditySetting: true,
         temperatureUnitForUX: this.hap.config.forceFahrenheit ? 'F'
           : service.characteristics.find(x => x.type === Characteristic.TemperatureDisplayUnits).value ? 'F' : 'C',
       },
@@ -64,7 +64,7 @@ export class TemperatureSensor {
   }
 
   execute(service: HapService, command): AccessoryTypeExecuteResponse {
-	  // no command
+      // no command
       return { payload: { characteristics: [] } };
   }
 
