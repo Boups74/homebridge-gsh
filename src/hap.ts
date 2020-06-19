@@ -48,7 +48,7 @@ export class Hap {
     SecuritySystem: new SecuritySystem(),
     Switch: new Switch('action.devices.types.SWITCH'),
     Television: new Television(),
-	TemperatureSensor: TemperatureSensor(this),
+	TemperatureSensor: new TemperatureSensor(this),
     Thermostat: new Thermostat(this),
     Window: new Window(),
     WindowCovering: new WindowCovering(),
